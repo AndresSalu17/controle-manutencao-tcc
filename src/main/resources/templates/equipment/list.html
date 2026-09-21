@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Equipamentos')}"></head>
+
+<body>
+
+    <div>
+
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+        <main class="app-content">
+
+            <!-- Cabeçalho -->
+            <div class="page-header">
+
+                <div>
+
+                    <h1 class="page-title">
+                        Equipamentos
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Gerencie os equipamentos cadastrados no sistema.
+                    </p>
+
+                </div>
+
+                <a th:href="@{/equipamentos/novo}" class="btn btn-primary">
+
+                    <i class="bi bi-plus-lg me-1"></i>
+
+                    Novo equipamento
+
+                </a>
+
+            </div>
+
+
+            <!-- Conteúdo -->
+            <div class="app-card">
+
+                <!-- Cabeçalho da tabela -->
+                <div class="card-header-clean">
+
+                    <div>
+
+                        <h2 class="card-title">
+                            Equipamentos cadastrados
+                        </h2>
+
+                        <small class="text-muted" th:text="${equipments.size() + ' equipamento(s)'}">
+                            0 equipamentos
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Busca -->
+                <div class="p-3 border-bottom">
+
+                    <div class="position-relative">
+
+                        <i class="bi bi-search position-absolute" style="left: 14px; top: 11px; color: #98a2b3;">
+                        </i>
+
+                        <input type="text" id="searchEquipment" class="form-control" style="padding-left: 38px;"
+                            placeholder="Buscar equipamento...">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Tabela -->
+                <div class="table-responsive">
+
+                    <table class="table app-table" id="equipmentTable">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Equipamento
+                                </th>
+
+                                <th>
+                                    Código
+                                </th>
+
+                                <th>
+                                    Categoria
+                                </th>
+
+                                <th>
+                                    Localização
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="text-end">
+                                    Ações
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr th:each="equipment : ${equipments}">
+
+                                <!-- Nome -->
+                                <td>
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <div class="equipment-icon">
+
+                                            <i class="bi bi-cpu"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="fw-semibold text-dark" th:text="${equipment.name}">
+                                                Compressor 01
+                                            </div>
+
+                                            <small class="text-muted" th:text="${equipment.description != null && !equipment.description.isEmpty()
+                                           ? equipment.description
+                                           : 'Sem descrição'}">
+                                                Sem descrição
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Código -->
+                                <td>
+
+                                    <span class="equipment-code" th:text="${equipment.code}">
+                                        EQ-001
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Categoria -->
+                                <td th:text="${equipment.category != null && !equipment.category.isEmpty()
+                                      ? equipment.category
+                                      : '—'}">
+                                    Compressores
+                                </td>
+
+
+                                <!-- Localização -->
+                                <td th:text="${equipment.location != null && !equipment.location.isEmpty()
+                                      ? equipment.location
+                                      : '—'}">
+                                    Setor A
+                                </td>
+
+
+                                <!-- Status -->
+                                <td>
+
+                                    <span th:if="${equipment.status.name() == 'ATIVO'}"
+                                        class="status-badge status-success">
+
+                                        <span class="status-dot"></span>
+
+                                        Ativo
+
+                                    </span>
+
+
+                                    <span th:if="${equipment.status.name() == 'EM_MANUTENCAO'}"
+                                        class="status-badge status-warning">
+
+                                        <span class="status-dot"></span>
+
+                                        Em manutenção
+
+                                    </span>
+
+
+                                    <span th:if="${equipment.status.name() == 'INATIVO'}"
+                                        class="status-badge status-danger">
+
+                                        <span class="status-dot"></span>
+
+                                        Inativo
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Ações -->
+                                <td class="text-end">
+
+                                    <div class="dropdown">
+
+                                        <button class="btn btn-sm btn-light border" type="button"
+                                            data-bs-toggle="dropdown">
+
+                                            <i class="bi bi-three-dots"></i>
+
+                                        </button>
+
+
+                                        <ul class="dropdown-menu dropdown-menu-end">
+
+                                            <li>
+
+                                                <a class="dropdown-item"
+                                                    th:href="@{/equipamentos/{id}(id=${equipment.id})}">
+
+                                                    <i class="bi bi-eye me-2"></i>
+
+                                                    Visualizar
+
+                                                </a>
+
+                                            </li>
+
+
+                                            <li>
+
+                                                <a class="dropdown-item"
+                                                    th:href="@{/equipamentos/{id}/editar(id=${equipment.id})}">
+
+                                                    <i class="bi bi-pencil me-2"></i>
+
+                                                    Editar
+
+                                                </a>
+
+                                            </li>
+
+
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+
+
+                                            <li>
+
+                                                <form th:action="@{/equipamentos/{id}/excluir(id=${equipment.id})}"
+                                                    method="post">
+
+                                                    <button type="submit" class="dropdown-item text-danger">
+
+                                                        <i class="bi bi-trash me-2"></i>
+
+                                                        Excluir
+
+                                                    </button>
+
+                                                </form>
+
+                                            </li>
+
+                                        </ul>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- Estado vazio -->
+                            <tr th:if="${#lists.isEmpty(equipments)}">
+
+                                <td colspan="6" class="text-center py-5">
+
+                                    <div class="empty-state">
+
+                                        <div class="empty-state-icon">
+
+                                            <i class="bi bi-cpu"></i>
+
+                                        </div>
+
+                                        <h3>
+                                            Nenhum equipamento cadastrado
+                                        </h3>
+
+                                        <p>
+                                            Comece cadastrando o primeiro equipamento.
+                                        </p>
+
+                                        <a th:href="@{/equipamentos/novo}" class="btn btn-primary">
+
+                                            <i class="bi bi-plus-lg me-1"></i>
+
+                                            Cadastrar equipamento
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script th:src="@{/js/app.js}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <script>
+
+        const searchInput = document.getElementById('searchEquipment');
+
+        if (searchInput) {
+
+            searchInput.addEventListener('input', function () {
+
+                const search = this.value.toLowerCase();
+
+                document
+                    .querySelectorAll('#equipmentTable tbody tr')
+                    .forEach(row => {
+
+                        const text = row.innerText.toLowerCase();
+
+                        row.style.display =
+                            text.includes(search) ? '' : 'none';
+
+                    });
+
+            });
+
+        }
+
+    </script>
+
+</body>
+
+</html>

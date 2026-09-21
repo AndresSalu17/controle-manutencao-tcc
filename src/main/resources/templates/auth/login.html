@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Login')}"></head>
+
+<body class="auth-page">
+
+    <div class="auth-container">
+
+        <div class="auth-card">
+
+            <div class="auth-brand">
+                <div class="auth-logo">
+                    M
+                </div>
+
+                <div>
+                    <h1>Manutenciona</h1>
+                    <span>Controle de manutenção</span>
+                </div>
+            </div>
+
+            <div class="auth-header">
+                <h2>Bem-vindo de volta</h2>
+                <p>Entre para acessar o sistema.</p>
+            </div>
+
+            <div th:if="${param.registered}" class="alert alert-success auth-alert">
+                Conta criada com sucesso. Agora você pode entrar.
+            </div>
+
+            <!-- Erro de login -->
+            <div th:if="${param.error}" class="alert alert-danger auth-alert">
+                E-mail ou senha inválidos.
+            </div>
+
+            <!-- Logout -->
+            <div th:if="${param.logout}" class="alert alert-success auth-alert">
+                Você saiu do sistema com sucesso.
+            </div>
+
+            <form th:action="@{/auth/login}" method="post">
+
+                <div class="form-group-modern">
+
+                    <label for="username">
+                        E-mail
+                    </label>
+
+                    <input type="email" id="username" name="username" class="form-control" placeholder="seu@email.com"
+                        autocomplete="email" required autofocus>
+
+                </div>
+
+                <div class="form-group-modern">
+
+                    <label for="password">
+                        Senha
+                    </label>
+
+                    <input type="password" id="password" name="password" class="form-control"
+                        placeholder="Digite sua senha" autocomplete="current-password" required>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary-modern w-100">
+
+                    Entrar
+
+                </button>
+
+            </form>
+
+            <div class="auth-footer">
+
+                <span>Ainda não possui uma conta?</span>
+
+                <a th:href="@{/auth/cadastro}">
+                    Criar conta
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="auth-bottom">
+            Sistema de controle de manutenção preventiva
+        </div>
+
+    </div>
+
+</body>
+
+</html>

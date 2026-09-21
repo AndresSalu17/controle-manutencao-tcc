@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Cadastro')}"></head>
+
+<body class="auth-page">
+
+    <div class="auth-container">
+
+        <div class="auth-card">
+
+            <div class="auth-brand">
+
+                <div class="auth-logo">
+                    M
+                </div>
+
+                <div>
+                    <h1>Manutenciona</h1>
+                    <span>Controle de manutenção</span>
+                </div>
+
+            </div>
+
+            <div class="auth-header">
+
+                <h2>Criar sua conta</h2>
+
+                <p>
+                    Cadastre-se para começar a utilizar o sistema.
+                </p>
+
+            </div>
+
+            <form th:action="@{/auth/cadastro}" th:object="${userRequestDTO}" method="post">
+
+                <div class="form-group-modern">
+
+                    <label for="name">
+                        Nome
+                    </label>
+
+                    <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Seu nome"
+                        autocomplete="name" required>
+
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="field-error">
+                    </div>
+
+                </div>
+
+                <div class="form-group-modern">
+
+                    <label for="email">
+                        E-mail
+                    </label>
+
+                    <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="seu@email.com"
+                        autocomplete="email" required>
+
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="field-error">
+                    </div>
+
+                </div>
+
+                <div class="form-group-modern">
+
+                    <label for="password">
+                        Senha
+                    </label>
+
+                    <input type="password" id="password" th:field="*{password}" class="form-control"
+                        placeholder="Mínimo de 6 caracteres" autocomplete="new-password" required>
+
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="field-error">
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary-modern w-100">
+
+                    Criar conta
+
+                </button>
+
+            </form>
+
+            <div class="auth-footer">
+
+                <span>Já possui uma conta?</span>
+
+                <a th:href="@{/auth/login}">
+                    Entrar
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="auth-bottom">
+            Sistema de controle de manutenção preventiva
+        </div>
+
+    </div>
+
+</body>
+
+</html>

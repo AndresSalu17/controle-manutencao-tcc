@@ -1,0 +1,117 @@
+<aside th:fragment="sidebar" class="app-sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="brand-icon">
+            <i class="bi bi-tools"></i>
+        </div>
+
+        <div>
+            <span class="brand-name">
+                Manutenciona
+            </span>
+
+            <small>
+                Controle de manutenção
+            </small>
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <div class="nav-section-title">
+            PRINCIPAL
+        </div>
+
+        <a th:href="@{/dashboard}" class="sidebar-link">
+
+            <i class="bi bi-grid-1x2"></i>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <div class="nav-section-title">
+            GESTÃO
+        </div>
+
+        <a th:href="@{/equipamentos}" class="sidebar-link">
+
+            <i class="bi bi-cpu"></i>
+
+            <span>
+                Equipamentos
+            </span>
+
+        </a>
+
+
+        <a th:href="@{/manutencoes}" class="sidebar-link">
+
+            <i class="bi bi-wrench-adjustable"></i>
+
+            <span>
+                Manutenções
+            </span>
+
+        </a>
+
+
+        <a th:href="@{/planos-manutencao/novo}" class="sidebar-link">
+
+            <i class="bi bi-calendar-check"></i>
+
+            <span>
+                Novo plano
+            </span>
+
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-footer">
+
+        <div class="sidebar-user">
+
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
+            </div>
+
+            <div class="user-info">
+
+                <strong>
+                    Usuário
+                </strong>
+
+                <span>
+                    Administrador
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <form th:action="@{/logout}" method="post">
+
+            <button type="submit" class="sidebar-logout">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Sair
+                </span>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>

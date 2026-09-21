@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(${equipmentId != null ? 'Editar equipamento' : 'Novo equipamento'})}"></head>
+
+<body>
+
+    <div>
+
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+        <main class="app-content">
+
+
+            <!-- Cabeçalho -->
+            <div class="page-header">
+
+                <div>
+
+                    <a th:href="@{/equipamentos}" class="back-link">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Equipamentos
+
+                    </a>
+
+                    <h1 class="page-title mt-2"
+                        th:text="${equipmentId != null ? 'Editar equipamento' : 'Novo equipamento'}">
+                        Novo equipamento
+                    </h1>
+
+                    <p class="page-subtitle">
+
+                        <span th:if="${equipmentId == null}">
+                            Cadastre um novo equipamento para acompanhar suas manutenções.
+                        </span>
+
+                        <span th:if="${equipmentId != null}">
+                            Atualize as informações deste equipamento.
+                        </span>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Formulário -->
+            <div class="row justify-content-center">
+
+                <div class="col-12 col-xl-9">
+
+                    <div class="app-card">
+
+
+                        <form th:object="${equipmentRequestDTO}" th:action="${equipmentId != null
+                              ? '/equipamentos/' + equipmentId
+                              : '/equipamentos'}" method="post">
+
+
+                            <!-- Informações -->
+                            <div class="form-section">
+
+                                <div class="form-section-header">
+
+                                    <div class="form-section-icon">
+
+                                        <i class="bi bi-cpu"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <h2>
+                                            Informações do equipamento
+                                        </h2>
+
+                                        <p>
+                                            Informe os dados principais do equipamento.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row g-3">
+
+
+                                    <!-- Nome -->
+                                    <div class="col-12">
+
+                                        <label class="form-label">
+                                            Nome do equipamento
+                                        </label>
+
+                                        <input type="text" class="form-control form-control-modern" th:field="*{name}"
+                                            placeholder="Ex.: Compressor de ar 01">
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('name')}"
+                                            th:errors="*{name}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Código -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Código
+                                        </label>
+
+                                        <input type="text" class="form-control form-control-modern" th:field="*{code}"
+                                            placeholder="Ex.: EQ-001">
+
+                                        <div class="form-help">
+                                            Código único para identificação.
+                                        </div>
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('code')}"
+                                            th:errors="*{code}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Categoria -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Categoria
+                                        </label>
+
+                                        <input type="text" class="form-control form-control-modern"
+                                            th:field="*{category}" placeholder="Ex.: Compressores">
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('category')}"
+                                            th:errors="*{category}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Localização -->
+                                    <div class="col-12">
+
+                                        <label class="form-label">
+                                            Localização
+                                        </label>
+
+                                        <input type="text" class="form-control form-control-modern"
+                                            th:field="*{location}" placeholder="Ex.: Setor de produção">
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('location')}"
+                                            th:errors="*{location}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Descrição -->
+                                    <div class="col-12">
+
+                                        <label class="form-label">
+                                            Descrição
+                                            <span class="text-muted fw-normal">
+                                                (opcional)
+                                            </span>
+                                        </label>
+
+                                        <textarea class="form-control form-control-modern" th:field="*{description}"
+                                            rows="4"
+                                            placeholder="Adicione informações importantes sobre o equipamento...">
+                                    </textarea>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Status -->
+                            <div class="form-section border-top">
+
+                                <div class="form-section-header">
+
+                                    <div class="form-section-icon">
+
+                                        <i class="bi bi-activity"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <h2>
+                                            Situação
+                                        </h2>
+
+                                        <p>
+                                            Informe a situação atual do equipamento.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Status
+                                        </label>
+
+                                        <select class="form-select form-control-modern" th:field="*{status}">
+
+                                            <option value="">
+                                                Selecione o status
+                                            </option>
+
+                                            <option
+                                                th:each="status : ${T(com.tcc.controledemanutencao.enums.EquipmentStatus).values()}"
+                                                th:value="${status}" th:text="${status.name() == 'ATIVO'
+                                                    ? 'Ativo'
+                                                    : status.name() == 'EM_MANUTENCAO'
+                                                    ? 'Em manutenção'
+                                                    : 'Inativo'}">
+                                            </option>
+
+                                        </select>
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('status')}"
+                                            th:errors="*{status}">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Ações -->
+                            <div class="form-actions">
+
+                                <a th:href="@{/equipamentos}" class="btn btn-soft">
+
+                                    Cancelar
+
+                                </a>
+
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi bi-check-lg me-1"></i>
+
+                                    <span th:text="${equipmentId != null
+                                    ? 'Salvar alterações'
+                                    : 'Cadastrar equipamento'}">
+                                        Cadastrar equipamento
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script th:src="@{/js/app.js}"></script>
+
+</body>
+
+</html>

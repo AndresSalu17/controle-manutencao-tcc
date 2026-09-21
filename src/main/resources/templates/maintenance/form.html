@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head(${maintenanceId != null ? 'Editar manutenção' : 'Registrar manutenção'})}">
+</head>
+
+<body>
+
+    <div>
+
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+        <main class="app-content">
+
+
+            <!-- Cabeçalho -->
+            <div class="page-header">
+
+                <div>
+
+                    <a th:href="@{/manutencoes}" class="back-link">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Manutenções
+
+                    </a>
+
+
+                    <h1 class="page-title mt-2" th:text="${maintenanceId != null
+                        ? 'Editar manutenção'
+                        : 'Registrar manutenção'}">
+
+                        Registrar manutenção
+
+                    </h1>
+
+
+                    <p class="page-subtitle">
+
+                        <span th:if="${maintenanceId == null}">
+                            Registre uma manutenção realizada em um equipamento.
+                        </span>
+
+                        <span th:if="${maintenanceId != null}">
+                            Atualize as informações do registro.
+                        </span>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Formulário -->
+            <div class="row justify-content-center">
+
+                <div class="col-12 col-xl-9">
+
+                    <div class="app-card">
+
+
+                        <form th:object="${maintenanceRequestDTO}" th:action="${maintenanceId != null
+                              ? '/manutencoes/' + maintenanceId
+                              : '/manutencoes'}" method="post">
+
+
+                            <!-- Equipamento -->
+                            <div class="form-section">
+
+                                <div class="form-section-header">
+
+                                    <div class="form-section-icon">
+
+                                        <i class="bi bi-cpu"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <h2>
+                                            Equipamento
+                                        </h2>
+
+                                        <p>
+                                            Selecione o equipamento que recebeu a manutenção.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row g-3">
+
+                                    <div class="col-12">
+
+                                        <label class="form-label">
+                                            Equipamento
+                                        </label>
+
+                                        <select class="form-select form-control-modern" th:field="*{equipmentId}">
+
+                                            <option value="">
+                                                Selecione um equipamento
+                                            </option>
+
+                                            <option th:each="equipment : ${equipments}" th:value="${equipment.id}"
+                                                th:text="${equipment.name + ' — ' + equipment.code}">
+                                            </option>
+
+                                        </select>
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('equipmentId')}"
+                                            th:errors="*{equipmentId}">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Dados -->
+                            <div class="form-section border-top">
+
+                                <div class="form-section-header">
+
+                                    <div class="form-section-icon">
+
+                                        <i class="bi bi-wrench-adjustable"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <h2>
+                                            Dados da manutenção
+                                        </h2>
+
+                                        <p>
+                                            Informe o tipo, a data e o serviço realizado.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row g-3">
+
+
+                                    <!-- Tipo -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Tipo de manutenção
+                                        </label>
+
+                                        <select class="form-select form-control-modern" th:field="*{type}">
+
+                                            <option value="">
+                                                Selecione o tipo
+                                            </option>
+
+                                            <option th:each="type : ${maintenanceTypes}" th:value="${type}" th:text="${type.name() == 'PREVENTIVA'
+                                                    ? 'Preventiva'
+                                                    : type.name() == 'CORRETIVA'
+                                                    ? 'Corretiva'
+                                                    : type.name() == 'INSPECAO'
+                                                    ? 'Inspeção'
+                                                    : 'Outra'}">
+                                            </option>
+
+                                        </select>
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('type')}"
+                                            th:errors="*{type}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Data -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Data
+                                        </label>
+
+                                        <input type="date" class="form-control form-control-modern" th:field="*{date}">
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('date')}"
+                                            th:errors="*{date}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Descrição -->
+                                    <div class="col-12">
+
+                                        <label class="form-label">
+                                            Descrição do serviço
+                                        </label>
+
+                                        <textarea class="form-control form-control-modern" th:field="*{description}"
+                                            rows="4" placeholder="Descreva o que foi realizado...">
+                                    </textarea>
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('description')}"
+                                            th:errors="*{description}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Custo -->
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Custo
+                                            <span class="text-muted fw-normal">
+                                                (opcional)
+                                            </span>
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <span class="input-group-text bg-white">
+                                                R$
+                                            </span>
+
+                                            <input type="number" step="0.01" min="0"
+                                                class="form-control form-control-modern" th:field="*{cost}"
+                                                placeholder="0,00">
+
+                                        </div>
+
+                                        <div class="field-error" th:if="${#fields.hasErrors('cost')}"
+                                            th:errors="*{cost}">
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Observação -->
+                                    <div class="col-12">
+
+                                        <label class="form-label">
+
+                                            Observações
+
+                                            <span class="text-muted fw-normal">
+                                                (opcional)
+                                            </span>
+
+                                        </label>
+
+                                        <textarea class="form-control form-control-modern" th:field="*{observation}"
+                                            rows="3" placeholder="Alguma informação adicional?">
+                                    </textarea>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Ações -->
+                            <div class="form-actions">
+
+                                <a th:href="@{/manutencoes}" class="btn btn-soft">
+
+                                    Cancelar
+
+                                </a>
+
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi bi-check-lg me-1"></i>
+
+                                    <span th:text="${maintenanceId != null
+                                    ? 'Salvar alterações'
+                                    : 'Registrar manutenção'}">
+                                        Registrar manutenção
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script th:src="@{/js/app.js}"></script>
+
+</body>
+
+</html>

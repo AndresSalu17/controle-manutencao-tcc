@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Dashboard')}"></head>
+
+<body>
+
+    <div>
+
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <!-- Navbar mobile -->
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+        <main class="app-content">
+
+            <!-- Cabeçalho -->
+            <div class="page-header">
+
+                <div>
+
+                    <h1 class="page-title">
+                        Dashboard
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Acompanhe a situação das manutenções dos seus equipamentos.
+                    </p>
+
+                </div>
+
+
+                <a th:href="@{/manutencoes/nova}" class="btn btn-primary">
+
+                    <i class="bi bi-plus-lg me-1"></i>
+
+                    Registrar manutenção
+
+                </a>
+
+            </div>
+
+
+            <!-- Indicadores -->
+            <div class="row g-3 mb-4">
+
+
+                <!-- Total -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <div class="app-card stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon blue">
+
+                                <i class="bi bi-cpu"></i>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Equipamentos
+                        </div>
+
+                        <div class="stat-value" th:text="${dashboard.totalEquipment}">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Em dia -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <div class="app-card stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon green">
+
+                                <i class="bi bi-check-lg"></i>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Manutenções em dia
+                        </div>
+
+                        <div class="stat-value" th:text="${dashboard.maintenanceInDay}">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Próximas -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <div class="app-card stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon yellow">
+
+                                <i class="bi bi-clock"></i>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Próximas manutenções
+                        </div>
+
+                        <div class="stat-value" th:text="${dashboard.maintenanceUpcoming}">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Atrasadas -->
+                <div class="col-12 col-sm-6 col-xl-3">
+
+                    <div class="app-card stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon red">
+
+                                <i class="bi bi-exclamation-lg"></i>
+
+                            </div>
+
+                        </div>
+
+                        <div class="stat-label">
+                            Manutenções atrasadas
+                        </div>
+
+                        <div class="stat-value" th:text="${dashboard.maintenanceOverdue}">
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Conteúdo inferior -->
+            <div class="row g-3">
+
+
+                <!-- Últimas manutenções -->
+                <!-- Conteúdo inferior -->
+                <div class="row g-3">
+
+
+                    <!-- Atenção -->
+                    <div class="col-12 col-xl-8">
+
+                        <div class="app-card attention-card">
+
+                            <div class="card-header-clean">
+
+                                <div>
+
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <div class="attention-header-icon">
+
+                                            <i class="bi bi-exclamation-triangle"></i>
+
+                                        </div>
+
+                                        <h2 class="card-title">
+                                            Manutenções que precisam de atenção
+                                        </h2>
+
+                                    </div>
+
+                                    <small class="text-muted">
+                                        Equipamentos com manutenção atrasada ou próxima
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Lista -->
+                            <div class="attention-list" th:if="${!#lists.isEmpty(dashboard.attentionPlans)}">
+
+
+                                <div th:each="plan : ${dashboard.attentionPlans}" class="attention-item">
+
+
+                                    <!-- Ícone -->
+                                    <div th:if="${plan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())}"
+                                        class="attention-icon danger">
+
+                                        <i class="bi bi-exclamation-lg"></i>
+
+                                    </div>
+
+
+                                    <div th:if="${!plan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())}"
+                                        class="attention-icon warning">
+
+                                        <i class="bi bi-clock"></i>
+
+                                    </div>
+
+
+                                    <!-- Informações -->
+                                    <div class="attention-info">
+
+                                        <div class="attention-equipment">
+
+                                            <strong th:text="${plan.equipment.name}">
+                                                Compressor 01
+                                            </strong>
+
+                                            <span th:text="${plan.equipment.code}">
+                                                EQ-001
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="attention-plan" th:text="${plan.description}">
+                                            Manutenção preventiva geral
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Data -->
+                                    <div class="attention-date">
+
+                                        <span th:if="${plan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())}"
+                                            class="status-badge status-danger">
+
+                                            <span class="status-dot"></span>
+
+                                            Atrasada
+
+                                        </span>
+
+
+                                        <span
+                                            th:if="${!plan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())}"
+                                            class="status-badge status-warning">
+
+                                            <span class="status-dot"></span>
+
+                                            Próxima
+
+                                        </span>
+
+
+                                        <small>
+
+                                            <span
+                                                th:if="${plan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())}">
+                                                Venceu em
+                                            </span>
+
+                                            <span
+                                                th:if="${!plan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())}">
+                                                Prevista para
+                                            </span>
+
+                                            <strong
+                                                th:text="${#temporals.format(plan.nextMaintenanceDate, 'dd/MM/yyyy')}">
+                                                20/09/2026
+                                            </strong>
+
+                                        </small>
+
+                                    </div>
+
+
+                                    <!-- Ação -->
+                                    <a th:href="@{/equipamentos/{id}(id=${plan.equipment.id})}"
+                                        class="attention-action">
+
+                                        <i class="bi bi-chevron-right"></i>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Tudo em dia -->
+                            <div th:if="${#lists.isEmpty(dashboard.attentionPlans)}" class="attention-empty">
+
+                                <div class="attention-empty-icon">
+
+                                    <i class="bi bi-check-lg"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Tudo em dia
+                                    </strong>
+
+                                    <p>
+                                        Nenhuma manutenção precisa de atenção nos próximos 7 dias.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Ações rápidas -->
+                    <div class="col-12 col-xl-4">
+
+                        <div class="app-card">
+
+                            <div class="card-header-clean">
+
+                                <div>
+
+                                    <h2 class="card-title">
+                                        Ações rápidas
+                                    </h2>
+
+                                    <small class="text-muted">
+                                        Acesse as principais funções
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="p-3">
+
+                                <a th:href="@{/equipamentos/novo}" class="quick-action">
+
+                                    <div class="quick-action-icon blue">
+
+                                        <i class="bi bi-cpu"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            Novo equipamento
+                                        </strong>
+
+                                        <span>
+                                            Cadastrar equipamento
+                                        </span>
+
+                                    </div>
+
+                                    <i class="bi bi-chevron-right ms-auto"></i>
+
+                                </a>
+
+
+                                <a th:href="@{/manutencoes/nova}" class="quick-action">
+
+                                    <div class="quick-action-icon orange">
+
+                                        <i class="bi bi-wrench"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            Registrar manutenção
+                                        </strong>
+
+                                        <span>
+                                            Adicionar novo registro
+                                        </span>
+
+                                    </div>
+
+                                    <i class="bi bi-chevron-right ms-auto"></i>
+
+                                </a>
+
+
+                                <a th:href="@{/planos-manutencao/novo}" class="quick-action">
+
+                                    <div class="quick-action-icon green">
+
+                                        <i class="bi bi-calendar-check"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            Novo plano
+                                        </strong>
+
+                                        <span>
+                                            Configurar periodicidade
+                                        </span>
+
+                                    </div>
+
+                                    <i class="bi bi-chevron-right ms-auto"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Últimas manutenções -->
+                    <div class="col-12">
+
+                        <div class="app-card">
+
+                            <div class="card-header-clean">
+
+                                <div>
+
+                                    <h2 class="card-title">
+                                        Últimas manutenções
+                                    </h2>
+
+                                    <small class="text-muted">
+                                        Registros realizados recentemente
+                                    </small>
+
+                                </div>
+
+
+                                <a th:href="@{/manutencoes}" class="btn btn-sm btn-soft">
+
+                                    Ver todas
+
+                                    <i class="bi bi-arrow-right ms-1"></i>
+
+                                </a>
+
+                            </div>
+
+
+                            <div class="table-responsive">
+
+                                <table class="table app-table">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Equipamento
+                                            </th>
+
+                                            <th>
+                                                Tipo
+                                            </th>
+
+                                            <th>
+                                                Data
+                                            </th>
+
+                                            <th>
+                                                Descrição
+                                            </th>
+
+                                            <th>
+                                                Custo
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody>
+
+                                        <tr th:each="maintenance : ${dashboard.recentMaintenances}">
+
+                                            <td>
+
+                                                <div class="d-flex align-items-center gap-3">
+
+                                                    <div class="maintenance-equipment-icon">
+
+                                                        <i class="bi bi-cpu"></i>
+
+                                                    </div>
+
+                                                    <div>
+
+                                                        <div class="fw-semibold text-dark"
+                                                            th:text="${maintenance.equipment.name}">
+                                                            Compressor 01
+                                                        </div>
+
+                                                        <small class="text-muted"
+                                                            th:text="${maintenance.equipment.code}">
+                                                            EQ-001
+                                                        </small>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span th:if="${maintenance.type.name() == 'PREVENTIVA'}"
+                                                    class="maintenance-type preventive">
+
+                                                    <span class="type-dot"></span>
+
+                                                    Preventiva
+
+                                                </span>
+
+                                                <span th:if="${maintenance.type.name() == 'CORRETIVA'}"
+                                                    class="maintenance-type corrective">
+
+                                                    <span class="type-dot"></span>
+
+                                                    Corretiva
+
+                                                </span>
+
+                                                <span th:if="${maintenance.type.name() == 'INSPECAO'}"
+                                                    class="maintenance-type inspection">
+
+                                                    <span class="type-dot"></span>
+
+                                                    Inspeção
+
+                                                </span>
+
+                                                <span th:if="${maintenance.type.name() == 'OUTRA'}"
+                                                    class="maintenance-type other">
+
+                                                    <span class="type-dot"></span>
+
+                                                    Outra
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td th:text="${#temporals.format(maintenance.date, 'dd/MM/yyyy')}">
+                                                15/09/2026
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="maintenance-description"
+                                                    th:text="${maintenance.description}">
+                                                    Troca de óleo
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span th:if="${maintenance.cost != null}" class="fw-semibold text-dark"
+                                                    th:text="${'R$ ' + #numbers.formatDecimal(maintenance.cost, 1, 2)}">
+                                                    R$ 250,00
+                                                </span>
+
+                                                <span th:if="${maintenance.cost == null}" class="text-muted">
+                                                    —
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr th:if="${#lists.isEmpty(dashboard.recentMaintenances)}">
+
+                                            <td colspan="5" class="text-center py-5">
+
+                                                <div class="text-muted">
+
+                                                    <i class="bi bi-wrench-adjustable display-6 d-block mb-2"></i>
+
+                                                    Nenhuma manutenção registrada.
+
+                                                </div>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script th:src="@{/js/app.js}"></script>
+
+</body>
+
+</html>

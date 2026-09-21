@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Histórico de manutenção')}">
+</head>
+
+<body>
+
+    <div>
+
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <main class="app-content">
+
+            <!-- Cabeçalho -->
+            <div class="page-header">
+
+                <div>
+
+                    <a th:href="@{/equipamentos/{id}(id=${equipment.id})}" class="back-link">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Equipamento
+
+                    </a>
+
+                    <h1 class="page-title mt-2">
+                        Histórico de manutenção
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Histórico dos serviços realizados neste equipamento.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Equipamento -->
+            <div class="history-equipment-card">
+
+                <div class="history-equipment-icon">
+                    <i class="bi bi-cpu"></i>
+                </div>
+
+                <div class="history-equipment-info">
+
+                    <h2 th:text="${equipment.name}">
+                        Notebook
+                    </h2>
+
+                    <span>
+                        Código:
+                        <strong th:text="${equipment.code}">
+                            NTBK-01
+                        </strong>
+                    </span>
+
+                </div>
+
+                <span class="status-badge status-active" th:if="${equipment.status.name() == 'ATIVO'}">
+                    Ativo
+                </span>
+
+                <span class="status-badge status-maintenance" th:if="${equipment.status.name() == 'EM_MANUTENCAO'}">
+                    Em manutenção
+                </span>
+
+                <span class="status-badge status-inactive" th:if="${equipment.status.name() == 'INATIVO'}">
+                    Inativo
+                </span>
+
+            </div>
+
+
+            <!-- Histórico -->
+            <div class="app-card history-card">
+
+                <div class="history-card-header">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Manutenções realizadas
+                        </h2>
+
+                        <p class="section-subtitle">
+                            Registros de serviços realizados neste equipamento.
+                        </p>
+
+                    </div>
+
+                    <a th:href="@{/manutencoes/nova}" class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+
+                        Registrar manutenção
+
+                    </a>
+
+                </div>
+
+
+                <!-- Registros -->
+                <div th:if="${!#lists.isEmpty(maintenances)}" class="history-list">
+
+                    <div th:each="maintenance : ${maintenances}" class="history-item">
+
+                        <div class="history-item-icon" th:classappend="${maintenance.type.name() == 'PREVENTIVA'
+                            ? ' history-icon-preventiva'
+                            : maintenance.type.name() == 'CORRETIVA'
+                            ? ' history-icon-corretiva'
+                            : maintenance.type.name() == 'INSPECAO'
+                            ? ' history-icon-inspecao'
+                            : ' history-icon-outra'}">
+
+                            <i th:class="${maintenance.type.name() == 'PREVENTIVA'
+                            ? 'bi bi-shield-check'
+                            : maintenance.type.name() == 'CORRETIVA'
+                            ? 'bi bi-wrench-adjustable'
+                            : maintenance.type.name() == 'INSPECAO'
+                            ? 'bi bi-search'
+                            : 'bi bi-tools'}">
+                            </i>
+
+                        </div>
+
+
+                        <div class="history-item-content">
+
+                            <div class="history-item-top">
+
+                                <span class="maintenance-type-badge" th:classappend="${maintenance.type.name() == 'PREVENTIVA'
+                                      ? ' type-preventiva'
+                                      : maintenance.type.name() == 'CORRETIVA'
+                                      ? ' type-corretiva'
+                                      : maintenance.type.name() == 'INSPECAO'
+                                      ? ' type-inspecao'
+                                      : ' type-outra'}" th:text="${maintenance.type.name() == 'PREVENTIVA'
+                                      ? 'Preventiva'
+                                      : maintenance.type.name() == 'CORRETIVA'
+                                      ? 'Corretiva'
+                                      : maintenance.type.name() == 'INSPECAO'
+                                      ? 'Inspeção'
+                                      : 'Outra'}">
+
+                                    Preventiva
+
+                                </span>
+
+                                <span class="history-item-date"
+                                    th:text="${#temporals.format(maintenance.date, 'dd/MM/yyyy')}">
+
+                                    21/09/2026
+
+                                </span>
+
+                            </div>
+
+
+                            <h3 th:text="${maintenance.description}">
+                                Descrição da manutenção
+                            </h3>
+
+
+                            <div class="history-item-bottom">
+
+                                <div th:if="${maintenance.cost != null}" class="history-cost">
+
+                                    <span>Custo</span>
+
+                                    <strong th:text="${'R$ ' + #numbers.formatDecimal(
+                                        maintenance.cost,
+                                        1,
+                                        2,
+                                        'COMMA'
+                                    )}">
+                                        R$ 0,00
+                                    </strong>
+
+                                </div>
+
+
+                                <div th:if="${maintenance.observation != null
+                                        and !#strings.isEmpty(maintenance.observation)}" class="history-observation">
+
+                                    <i class="bi bi-chat-left-text"></i>
+
+                                    <span th:text="${maintenance.observation}">
+                                        Observação
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Nenhum registro -->
+                <div th:if="${#lists.isEmpty(maintenances)}" class="history-empty">
+
+                    <div class="empty-state-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+
+                    <h3>
+                        Nenhuma manutenção registrada
+                    </h3>
+
+                    <p>
+                        Ainda não existem registros para este equipamento.
+                    </p>
+
+                    <a th:href="@{/manutencoes/nova}" class="btn btn-primary">
+
+                        <i class="bi bi-plus-lg me-1"></i>
+
+                        Registrar primeira manutenção
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script th:src="@{/js/app.js}"></script>
+
+</body>
+
+</html>

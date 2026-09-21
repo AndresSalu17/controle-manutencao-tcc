@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('Detalhes do equipamento')}"></head>
+
+<body>
+
+    <div>
+
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+        <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+        <main class="app-content">
+
+
+            <!-- Voltar -->
+            <div class="mb-4">
+
+                <a th:href="@{/equipamentos}" class="back-link">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Voltar para equipamentos
+
+                </a>
+
+            </div>
+
+
+            <!-- Cabeçalho do equipamento -->
+            <div class="equipment-detail-header app-card mb-3">
+
+                <div class="equipment-detail-main">
+
+                    <div class="equipment-detail-icon">
+
+                        <i class="bi bi-cpu"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            <h1 class="page-title mb-0" th:text="${equipment.name}">
+                                Compressor 01
+                            </h1>
+
+
+                            <span th:if="${equipment.status.name() == 'ATIVO'}" class="status-badge status-success">
+
+                                <span class="status-dot"></span>
+
+                                Ativo
+
+                            </span>
+
+
+                            <span th:if="${equipment.status.name() == 'EM_MANUTENCAO'}"
+                                class="status-badge status-warning">
+
+                                <span class="status-dot"></span>
+
+                                Em manutenção
+
+                            </span>
+
+
+                            <span th:if="${equipment.status.name() == 'INATIVO'}" class="status-badge status-danger">
+
+                                <span class="status-dot"></span>
+
+                                Inativo
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="equipment-detail-code">
+
+                            <i class="bi bi-hash"></i>
+
+                            <span th:text="${equipment.code}">
+                                EQ-001
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="equipment-detail-actions">
+
+                    <a th:href="@{/equipamentos/{id}/editar(id=${equipment.id})}" class="btn btn-soft">
+
+                        <i class="bi bi-pencil me-1"></i>
+
+                        Editar
+
+                    </a>
+
+
+                    <a th:href="@{/manutencoes/equipamento/{id}(id=${equipment.id})}" class="btn btn-primary">
+
+                        <i class="bi bi-clock-history me-1"></i>
+
+                        Histórico
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Informações -->
+            <div class="row g-3">
+
+
+                <div class="col-12 col-md-4">
+
+                    <div class="app-card detail-info-card">
+
+                        <span class="detail-label">
+                            Categoria
+                        </span>
+
+                        <strong th:text="${equipment.category != null && !equipment.category.isEmpty()
+                                      ? equipment.category
+                                      : 'Não informado'}">
+                            Compressores
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-12 col-md-4">
+
+                    <div class="app-card detail-info-card">
+
+                        <span class="detail-label">
+                            Localização
+                        </span>
+
+                        <strong th:text="${equipment.location != null && !equipment.location.isEmpty()
+                                      ? equipment.location
+                                      : 'Não informado'}">
+                            Setor A
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-12 col-md-4">
+
+                    <div class="app-card detail-info-card">
+
+                        <span class="detail-label">
+                            Código
+                        </span>
+
+                        <strong th:text="${equipment.code}">
+                            EQ-001
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Descrição -->
+                <div class="col-12">
+
+                    <div class="app-card">
+
+                        <div class="card-header-clean">
+
+                            <h2 class="card-title">
+                                Sobre o equipamento
+                            </h2>
+
+                        </div>
+
+                        <div class="p-4">
+
+                            <p class="detail-description"
+                                th:if="${equipment.description != null && !equipment.description.isEmpty()}"
+                                th:text="${equipment.description}">
+                                Equipamento utilizado no setor de produção.
+                            </p>
+
+                            <p class="detail-description text-muted"
+                                th:if="${equipment.description == null || equipment.description.isEmpty()}">
+
+                                Nenhuma descrição cadastrada.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Manutenção -->
+                <div class="col-12">
+
+                    <div class="app-card">
+
+                        <div class="card-header-clean">
+
+                            <div>
+
+                                <h2 class="card-title">
+                                    Manutenção
+                                </h2>
+
+                                <small class="text-muted">
+                                    Acompanhe o plano de manutenção deste equipamento.
+                                </small>
+
+                            </div>
+
+
+                            <a th:href="@{/planos-manutencao/novo}" class="btn btn-sm btn-primary">
+
+                                <i class="bi bi-plus-lg me-1"></i>
+
+                                Criar plano
+
+                            </a>
+
+                        </div>
+
+
+                        <div class="p-4">
+
+
+                            <!-- Existe plano -->
+                            <div th:if="${maintenancePlan != null}" class="maintenance-plan-card">
+
+
+                                <!-- Status -->
+                                <div class="plan-status-row">
+
+                                    <div>
+
+                                        <span class="plan-status-label">
+                                            PRÓXIMA MANUTENÇÃO
+                                        </span>
+
+
+                                        <div class="plan-next-date"
+                                            th:text="${#temporals.format(maintenancePlan.nextMaintenanceDate, 'dd/MM/yyyy')}">
+                                            20/09/2026
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Status calculado -->
+                                    <div>
+
+                                        <span
+                                            th:if="${maintenancePlan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())}"
+                                            class="status-badge status-danger">
+
+                                            <span class="status-dot"></span>
+
+                                            Atrasada
+
+                                        </span>
+
+
+                                        <span th:if="${!maintenancePlan.nextMaintenanceDate.isBefore(T(java.time.LocalDate).now())
+                    && !maintenancePlan.nextMaintenanceDate.isAfter(T(java.time.LocalDate).now().plusDays(7))}"
+                                            class="status-badge status-warning">
+
+                                            <span class="status-dot"></span>
+
+                                            Próxima
+
+                                        </span>
+
+
+                                        <span
+                                            th:if="${maintenancePlan.nextMaintenanceDate.isAfter(T(java.time.LocalDate).now().plusDays(7))}"
+                                            class="status-badge status-success">
+
+                                            <span class="status-dot"></span>
+
+                                            Em dia
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Informações -->
+                                <div class="row g-3 mt-1">
+
+
+                                    <div class="col-12 col-md-4">
+
+                                        <div class="plan-detail">
+
+                                            <span>
+                                                Plano
+                                            </span>
+
+                                            <strong th:text="${maintenancePlan.description}">
+                                                Manutenção preventiva geral
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-4">
+
+                                        <div class="plan-detail">
+
+                                            <span>
+                                                Periodicidade
+                                            </span>
+
+                                            <strong>
+
+                                                <span th:text="${maintenancePlan.frequency}">
+                                                    3
+                                                </span>
+
+                                                <span th:text="${maintenancePlan.frequencyUnit.name() == 'DAY'
+                            ? 'dia(s)'
+                            : maintenancePlan.frequencyUnit.name() == 'WEEK'
+                            ? 'semana(s)'
+                            : maintenancePlan.frequencyUnit.name() == 'MONTH'
+                            ? 'mês(es)'
+                            : 'ano(s)'}">
+                                                    meses
+                                                </span>
+
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-4">
+
+                                        <div class="plan-detail">
+
+                                            <span>
+                                                Última manutenção
+                                            </span>
+
+                                            <strong
+                                                th:text="${#temporals.format(maintenancePlan.lastMaintenanceDate, 'dd/MM/yyyy')}">
+                                                20/06/2026
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Ações -->
+                                <div class="plan-actions">
+
+                                    <a th:href="@{/planos-manutencao/{id}/editar(id=${maintenancePlan.id})}"
+                                        class="btn btn-sm btn-soft">
+
+                                        <i class="bi bi-pencil me-1"></i>
+
+                                        Editar plano
+
+                                    </a>
+
+
+                                    <a th:href="@{/manutencoes/nova}" class="btn btn-sm btn-primary">
+
+                                        <i class="bi bi-wrench me-1"></i>
+
+                                        Registrar manutenção
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Sem plano -->
+                            <div th:if="${maintenancePlan == null}" class="empty-state py-3">
+
+                                <div class="empty-state-icon">
+
+                                    <i class="bi bi-calendar-plus"></i>
+
+                                </div>
+
+                                <h3>
+                                    Nenhum plano cadastrado
+                                </h3>
+
+                                <p>
+                                    Crie um plano para que o sistema possa calcular automaticamente
+                                    as próximas manutenções.
+                                </p>
+
+
+                                <a th:href="@{/planos-manutencao/novo}" class="btn btn-primary">
+
+                                    <i class="bi bi-plus-lg me-1"></i>
+
+                                    Criar plano
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script th:src="@{/js/app.js}"></script>
+
+</body>
+
+</html>
